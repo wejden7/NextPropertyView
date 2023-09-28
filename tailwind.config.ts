@@ -9,6 +9,17 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      boxShadow:{
+          '3xl':'rgba(0, 0, 0, 0.35) 0px 5px 15px;'
+      },
+      width: {
+        sideBarOpen: "15rem",
+        sideBarClose: "5rem",
+      },
+      margin: {
+        sideBarOpen: "15rem",
+        sideBarClose: "5rem",
+      },
       colors: {
         primary: {
           100: "#569f0d",

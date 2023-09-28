@@ -2,3 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+.h-base {
+  height: calc(100vh - 7rem);
+}
+.min-h-bas {
+  min-height: calc(100vh - 7rem);
+}
+
+.input-base {
+  height: 3rem;
+  width: 100%;
+  padding-left: 1rem;
+  border: 1px solid black;
+  outline: none;
+}
+
+.input-error {
+  border: 1px solid red;
+}
+
+.form-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #569f0d;
+}
+
+@layer components {
+  .link {
+    @apply py-2 px-2.5 rounded-lg hover:bg-slate-200 text-clip cursor-pointer;
+  }
+  .btn {
+    @apply py-3 px-6  hover:bg-primary-100 hover:text-white transition-colors ease-in-out duration-300 bg-slate-200 font-semibold;
+  }
+  /* ... */
+}
+
+.scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
