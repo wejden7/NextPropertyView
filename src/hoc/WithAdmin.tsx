@@ -2,8 +2,9 @@
 import { notFound } from "next/navigation";
 import { isAdmin } from "@/service/auth";
 import { useEffect, useState } from "react";
-import { useApp } from "@/context/appcontext";
 import { getClientToken } from "@/service/token";
+import { authenticated } from "@/slice/authenticationSlice";
+import { useSelector } from "react-redux";
 
 type props = {
   children: React.ReactNode;
@@ -12,16 +13,16 @@ type props = {
 
 const WithAdmin = ({ children, notVisible }: props) => {
   const [admin, setAdmin] = useState(false);
-  const { isLoggedIn } = useApp();
+  const isAuthenticated = useSelector(authenticated)
 
   useEffect(() => {
       getClientToken()
         .then((token) => isAdmin(token))
         .then(() => setAdmin(true))
         .catch(() => setAdmin(false));
-  }, [isLoggedIn]);
+  }, [isAuthenticated]);
 
-  console.log("HOC isAdminServer", admin);
+ 
 
   if (!admin && !notVisible) return null;
   if (!admin && notVisible) notFound();

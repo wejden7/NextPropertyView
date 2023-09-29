@@ -3,7 +3,7 @@ import { CheckToken, RefreshToken } from "@/service/auth";
 import type { NextRequest } from "next/server";
 
 type props = {
-  token: string;
+  token: string | undefined;
   refrechtoken: string;
 };
 
@@ -22,7 +22,7 @@ export const getClientToken = async () => {
   const refrechtoken = Cookies.get("refreshToken");
 
   return new Promise<string>((resolve, reject) => {
-    if (token && refrechtoken) {
+    if (refrechtoken) {
       getToken({ token, refrechtoken })
         .then((result) => {
           Cookies.set("token", result, { expires: 7 });
@@ -38,7 +38,7 @@ export const getServerToken = async (request: NextRequest) => {
   const refrechtoken = request.cookies.get("refreshToken")?.value;
 
   return new Promise<string>((resolve, reject) => {
-    if (token && refrechtoken) {
+    if (refrechtoken) {
       getToken({ token, refrechtoken })
         .then((result) => {
           request.cookies.set("token", result);

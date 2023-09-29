@@ -23,5 +23,7 @@ export async function middleware(request: NextRequest) {
   }
   if (request.nextUrl.pathname.replace("/", "").length === 0) {
     return NextResponse.redirect(new URL("/accueil", request.url));
+    
   }
+
 }

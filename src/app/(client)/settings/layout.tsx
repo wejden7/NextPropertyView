@@ -15,7 +15,14 @@ export default function RootLayout({ children }: props) {
       <div className="w-[300px] scrollbar h-base p-4 overflow-y-scroll fixed ">
         <div className="flex flex-col gap-2">
           {navLinks.map((link, index) => {
-            return <LinkActive link={link} index={index} base="/settings" />;
+            return (
+              <LinkActive
+                key={index}
+                link={link}
+                index={index}
+                base="/settings"
+              />
+            );
           })}
         </div>
       </div>

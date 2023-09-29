@@ -1,42 +1,37 @@
 "use client";
 import { InputBas, InputPassword } from "@/components/Input";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { login } from "@/slice/authenticationSlice";
 import { Submit } from "@/components/Button";
-import { useApp } from "@/context/appcontext";
 import { useRouter } from "next/navigation";
 import { schemaSignin } from "@/utils/yup";
 import { useForm } from "react-hook-form";
-import { login } from "@/service/auth";
-import Link from "next/link";
+import { loginApi } from "@/service/auth";
+import { useDispatch } from "react-redux";
 import { useState } from "react";
+import Link from "next/link";
 
 const formOption = {
   resolver: yupResolver(schemaSignin),
   defaultValues: { email: "", password: "" },
 };
 
-const msg = "The email address or password is incorrect. Please retry...";
-
 export default function Page() {
-  const { register, handleSubmit, formState, reset } = useForm(formOption);
+  const msg = "The email address or password is incorrect. Please retry...";
+  const { register, handleSubmit, formState } = useForm(formOption);
   const [error, setError] = useState<String | null>(null);
   const { errors, isSubmitting } = formState;
-  const { CheckLogin } = useApp();
+  const dispatch = useDispatch();
   const router = useRouter();
-
-  const handleLogin = () => {
-    CheckLogin();
-    router.replace("/");
-  };
 
   const onSubmit = handleSubmit(async (data, e) => {
     e?.preventDefault();
-    await login(data)
-      .then((result) => handleLogin())
-      .catch((error) => {
-      //  if (error.response.status === 404) 
-        setError(msg);
-      });
+    await loginApi(data)
+      .then((result) => {
+        dispatch(login(result));
+        router.replace("/accueil");
+      })
+      .catch((error) => setError(msg));
   });
 
   return (

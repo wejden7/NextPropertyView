@@ -6,19 +6,19 @@ type props = {
   password: string;
 };
 
-export const login = (data: props) => {
+export const loginApi = (data: props) => {
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "Application/json",
   };
 
-  return new Promise((resolve, reject) =>
+  return new Promise<User>((resolve, reject) =>
     api
       .post("/login", data, { headers })
       .then((result) => {
         Cookies.set("token", result.data.token, { expires: 7 });
         Cookies.set("refreshToken", result.data.refreshToken, { expires: 7 });
-        resolve(result.data);
+        resolve(result.data.user);
       })
       .catch((error) => reject(error))
   );
@@ -80,7 +80,7 @@ export const resetPassword = (data: resetProps) => {
   );
 };
 
-export const CheckToken = (token: string) => {
+export const CheckToken = (token: string | undefined) => {
   console.log("CheckToken start");
 
   const headers = {
@@ -93,7 +93,11 @@ export const CheckToken = (token: string) => {
   const url = process.env.NEXT_PUBLIC_BASE_URL;
 
   return new Promise<string>(async (resolve, reject) => {
-    const response = await fetch(url+"/api/check-token", option);
+    if (!token) {
+      reject(false);
+      return;
+    }
+    const response = await fetch(url + "/api/check-token", option);
 
     if (!response.ok) {
       reject(false);
@@ -124,7 +128,7 @@ export const RefreshToken = (refreshToken: string) => {
   const url = process.env.NEXT_PUBLIC_BASE_URL;
 
   return new Promise<string>(async (resolve, reject) => {
-    const response = await fetch(url+"/api/refresh-token", option);
+    const response = await fetch(url + "/api/refresh-token", option);
 
     if (!response.ok) {
       reject(false);
@@ -149,7 +153,7 @@ export const isAdmin = (token: string) => {
   const url = process.env.NEXT_PUBLIC_BASE_URL;
 
   return new Promise(async (resolve, reject) => {
-    const response = await fetch(url+"/api/isadmin", option);
+    const response = await fetch(url + "/api/isadmin", option);
 
     if (!response.ok) {
       reject(false);
@@ -159,5 +163,57 @@ export const isAdmin = (token: string) => {
     const data = await response.json();
 
     resolve(data);
+  });
+};
+
+export const getUserApi = (token: string) => {
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type": "Application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  const option: RequestInit = { method: "GET", headers, cache: "no-store" };
+  const url = process.env.NEXT_PUBLIC_BASE_URL;
+
+  return new Promise<User>(async (resolve, reject) => {
+    const response = await fetch(url + "/api/profile", option);
+
+    if (!response.ok) {
+      reject(false);
+      return;
+    }
+
+    const data = await response.json();
+
+    resolve(data);
+  });
+};
+
+export const updateUserApi = (data: any, token: string) => {
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type": "Application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  const option: RequestInit = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(data),
+    cache: "no-store",
+  };
+  const url = process.env.NEXT_PUBLIC_BASE_URL;
+
+  return new Promise<User>(async (resolve, reject) => {
+    const response = await fetch(url + "/api/profile", option);
+
+    if (!response.ok) {
+      reject(false);
+      return;
+    }
+    const {user} = await response.json();
+   
+    resolve(user);
   });
 };
